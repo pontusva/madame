@@ -13,7 +13,11 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   Future<String>? userCredential;
 
-  final TextEditingController textEditingControllerUserName =
+  final TextEditingController textEditingControllerEmail =
+      TextEditingController();
+  final TextEditingController textEditingControllerName =
+      TextEditingController();
+  final TextEditingController textEditingControllerUsername =
       TextEditingController();
   final TextEditingController textEditingControllerPassword =
       TextEditingController();
@@ -22,10 +26,10 @@ class _SignupPageState extends State<SignupPage> {
     try {
       UserCredential user =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: textEditingControllerUserName.text,
+        email: textEditingControllerEmail.text,
         password: textEditingControllerPassword.text,
       );
-      createAlbum(user.user?.uid as String);
+      createUser(user.user?.uid as String);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         const SnackBar(
@@ -45,22 +49,26 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  Future<http.Response> createAlbum(String uid) {
+  Future<http.Response> createUser(String uid) {
     return http.post(
-      Uri.parse('http://10.0.2.2:4000/create'),
+      Uri.parse('http://10.0.2.2:4000/signUp'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'firebaseUID': uid,
+        'firebaseuid': uid,
+        'name': textEditingControllerName.text,
+        'username': textEditingControllerEmail.text,
       }),
     );
   }
 
   @override
   void dispose() {
-    textEditingControllerUserName.dispose();
+    textEditingControllerEmail.dispose();
     textEditingControllerPassword.dispose();
+    textEditingControllerName.dispose();
+    textEditingControllerUsername.dispose();
     // Clean up the controller when the widget is disposed.
     // This step is necessary to avoid memory leaks.
     super.dispose();
@@ -84,9 +92,30 @@ class _SignupPageState extends State<SignupPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              controller: textEditingControllerUserName,
+              controller: textEditingControllerEmail,
               decoration: const InputDecoration(
                 hintText: 'Enter your email',
+                helperText: "Email",
+                focusedBorder: border,
+                border: border,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: textEditingControllerName,
+              decoration: const InputDecoration(
+                hintText: 'Enter your name',
+                helperText: "name",
+                focusedBorder: border,
+                border: border,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: textEditingControllerUsername,
+              decoration: const InputDecoration(
+                hintText: 'Enter your username',
+                helperText: "Username",
                 focusedBorder: border,
                 border: border,
               ),
@@ -97,6 +126,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: textEditingControllerPassword,
               decoration: const InputDecoration(
                 hintText: 'Enter your password',
+                helperText: "Password",
                 border: border,
                 focusedBorder: border,
               ),

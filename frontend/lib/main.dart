@@ -15,6 +15,7 @@ class Madame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      showPerformanceOverlay: false,
       title: 'Madame',
       theme: ThemeData(
         primarySwatch: Colors.blue,
