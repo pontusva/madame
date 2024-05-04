@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "626475964964",
+    "project_id": "madame-5b88e",
+    "storage_bucket": "madame-5b88e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626475964964:android:c220ef008406b2bc5116b1",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaZcJhcxLGtEHuNrtrU9PZo40uRn367z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626475964964:android:e5318bcf202d01255116b1",
+        "android_client_info": {
+          "package_name": "com.madame.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaZcJhcxLGtEHuNrtrU9PZo40uRn367z8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
