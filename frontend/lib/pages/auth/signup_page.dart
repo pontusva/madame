@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:frontend/pages/auth/home_page.dart';
+import 'package:frontend/pages/auth/signin_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -58,7 +60,7 @@ class _SignupPageState extends State<SignupPage> {
       body: jsonEncode(<String, String>{
         'firebaseuid': uid,
         'name': textEditingControllerName.text,
-        'username': textEditingControllerEmail.text,
+        'username': textEditingControllerUsername.text,
       }),
     );
   }
@@ -132,12 +134,45 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () async {
-                await signUp();
-                setState(() {});
-              },
-              child: const Text('Register'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await signUp();
+                    FirebaseAuth.instance.userChanges().listen(
+                      (User? user) {
+                        if (user == null) {
+                          const SnackBar(
+                            content: Text('User is currently signed out!'),
+                          );
+                        } else {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const HomePage();
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                  child: const Text('Register'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const SigninPage();
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text('or login...'),
+                ),
+              ],
             )
           ],
         ),

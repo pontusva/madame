@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/firebase_options.dart';
-import 'package:frontend/signup_page.dart';
+import 'package:frontend/pages/auth/signup_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +15,7 @@ class Madame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showPerformanceOverlay: false,
+      debugShowCheckedModeBanner: false,
       title: 'Madame',
       theme: ThemeData(
         primarySwatch: Colors.blue,

@@ -1,7 +1,7 @@
 import { client } from "./configs/db.config";
 import dotenv from "dotenv";
 import express, { Express } from "express";
-import { signUp } from "./routes/auth";
+import { signUp, loggedIn } from "./routes/auth";
 
 dotenv.config();
 
@@ -11,6 +11,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.post("/signup", signUp);
+app.post("/loggedIn", loggedIn);
 
 app.listen(port, async () => {
   await client.connect();
