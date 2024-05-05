@@ -89,7 +89,7 @@ class _SignupPageState extends State<SignupPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Guardian Tails'),
+        title: const Text('Help mig hem!'),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),

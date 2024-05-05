@@ -1,8 +1,9 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:frontend/pages/navigation/ai_chat_page.dart';
+import 'package:frontend/pages/navigation/find_pets_page.dart';
+import 'package:frontend/pages/navigation/profile_page.dart';
+import 'package:frontend/pages/navigation/search_page.dart';
+import 'package:frontend/pages/navigation/welcome_page.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/auth/signin_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,82 +13,56 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<Map<String, dynamic>> user;
-  Future<Map<String, dynamic>> getUserInfo() async {
-    var uid = FirebaseAuth.instance.currentUser!.uid;
-    try {
-      final res = await http.post(
-        Uri.parse("http://10.0.2.2:4000/loggedIn"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'firebaseuid': uid,
-        }),
-      );
+  int currentPage = 0;
 
-      final data = jsonDecode(res.body);
-      return data;
-    } catch (e) {
-      throw e.toString();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    user = getUserInfo();
-  }
+  List<Widget> pages = [
+    const WelcomePage(),
+    const SearchPage(),
+    const FindPetsPage(),
+    const AiChatPage(),
+    const ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder(
-          future: user,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            final data = snapshot.data!;
-            final username = data["username"];
-
-            return Text('Welcome $username!');
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const SigninPage();
-                  },
-                ),
-              );
-            },
-            icon: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.logout),
-            ),
+      bottomNavigationBar: BottomNavigationBar(
+        iconSize: 35,
+        selectedFontSize: 0,
+        unselectedFontSize: 0,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentPage,
+        onTap: (index) {
+          setState(() {
+            currentPage = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pets),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline_sharp),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: user,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final data = snapshot.data!;
-
-          return Center(
-            child: Text('Welcome ${data["username"]}!'),
-          );
-        },
+      body: IndexedStack(
+        index: currentPage,
+        children: pages,
       ),
     );
   }
