@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<Map<String, dynamic>> user;
-  late String username;
   Future<Map<String, dynamic>> getUserInfo() async {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     try {
@@ -28,7 +27,6 @@ class _HomePageState extends State<HomePage> {
       );
 
       final data = jsonDecode(res.body);
-
       return data;
     } catch (e) {
       throw e.toString();
@@ -45,7 +43,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome $username!'),
+        title: FutureBuilder(
+          future: user,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+            final data = snapshot.data!;
+            final username = data["username"];
+
+            return Text('Welcome $username!');
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -58,7 +67,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             },
-            icon: const Icon(Icons.logout),
+            icon: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.logout),
+            ),
           ),
         ],
       ),
@@ -71,7 +83,6 @@ class _HomePageState extends State<HomePage> {
             );
           }
           final data = snapshot.data!;
-          username = data["username"];
 
           return Center(
             child: Text('Welcome ${data["username"]}!'),

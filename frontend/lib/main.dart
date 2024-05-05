@@ -20,11 +20,8 @@ class Madame extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Madame'),
-        ),
-        body: const SignupPage(),
+      home: const Scaffold(
+        body: SignupPage(),
       ),
     );
   }

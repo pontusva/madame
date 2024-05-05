@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/auth/home_page.dart';
+import 'package:frontend/pages/auth/signup_page.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -43,6 +44,23 @@ class _SigninPageState extends State<SigninPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Log into your account'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const SignupPage();
+                      },
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

@@ -88,6 +88,26 @@ class _SignupPageState extends State<SignupPage> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Guardian Tails'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const SigninPage();
+                    },
+                  ),
+                );
+              },
+              icon: const Icon(Icons.login),
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -159,18 +179,6 @@ class _SignupPageState extends State<SignupPage> {
                     );
                   },
                   child: const Text('Register'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return const SigninPage();
-                        },
-                      ),
-                    );
-                  },
-                  child: const Text('or login...'),
                 ),
               ],
             )
