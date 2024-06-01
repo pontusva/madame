@@ -35,6 +35,7 @@ class _WelcomePageState extends State<WelcomePage> {
       );
 
       final data = jsonDecode(res.body);
+
       return data;
     } catch (e) {
       throw e.toString();

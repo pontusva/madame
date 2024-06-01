@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { lostPetQuery } from "../configs/db.queries";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -6,15 +7,55 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now());
+    cb(null, file.fieldname + "-" + Date.now()) + ".jpg";
   },
 });
 export const upload = multer({ storage });
 
-export const addLostPet = async (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).send("No file uploaded");
-  }
+let id: number;
 
-  res.send("File uploaded successfully");
+export const uploadImage = async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded");
+    }
+    await lostPetQuery.uploadImage.values(id, req.file.originalname);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addLostPet = async (req: Request, res: Response) => {
+  const {
+    user_id,
+    Name: name,
+    Species: species,
+    Breed: breed,
+    Age: age,
+    Size: size,
+    Color: color,
+    Markings: markings,
+    "Collar and tags": collar_and_tags,
+    Microchip: microchip,
+    City: city,
+    Region: region,
+    Area: area,
+  } = req.body;
+
+  const response = await lostPetQuery.addAnimalInfo.values(
+    user_id,
+    name,
+    species,
+    breed,
+    age,
+    size,
+    color,
+    markings,
+    collar_and_tags,
+    microchip,
+    city,
+    region,
+    area
+  );
+  id = response.rows[0].id;
 };

@@ -1,4 +1,6 @@
 import "dart:io";
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 import "package:image_picker/image_picker.dart";
@@ -15,24 +17,33 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
   File? galleryFile;
+  late Future<Map<String, dynamic>> user;
   final picker = ImagePicker();
+  Future<Map<String, dynamic>> getUserInfo() async {
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    try {
+      final res = await http.post(
+        Uri.parse("http://10.0.2.2:4000/loggedIn"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'firebaseuid': uid,
+        }),
+      );
 
-  void uploadImage() async {
-    var request =
-        http.MultipartRequest('POST', Uri.parse('http://10.0.2.2:4000/upload'));
+      final data = jsonDecode(res.body);
 
-    request.files.add(await http.MultipartFile.fromPath(
-      'image',
-      galleryFile!.path,
-      contentType: MediaType.parse('image/jpeg'),
-    ));
-
-    var response = await request.send();
-    if (response.statusCode == 200) {
-      print('Uploaded!');
-    } else {
-      print('Failed to upload file: ${response.statusCode}');
+      return data;
+    } catch (e) {
+      throw e.toString();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    user = getUserInfo();
   }
 
   void _showPicker({
@@ -84,10 +95,44 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     );
   }
 
-  void _saveForm() {
+  void saveForm() async {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
+      var response = await http.post(
+        Uri.parse('http://10.0.2.2:4000/upload'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(_formData),
+      );
+
+      if (response.statusCode == 200) {
+        print('Form data submitted!');
+      } else {
+        print('Failed to submit form data: ${response.statusCode}');
+      }
+    }
+  }
+
+  void uploadImage() async {
+    if (galleryFile != null) {
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('http://10.0.2.2:4000/uploadImage'));
+
+      // Add file to request
+      request.files.add(await http.MultipartFile.fromPath(
+        'image',
+        galleryFile!.path,
+        contentType: MediaType.parse('image/jpeg'),
+      ));
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        print('Uploaded!');
+      } else {
+        print('Failed to upload file: ${response.statusCode}');
+      }
     }
   }
 
@@ -337,6 +382,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     ),
                     child: const Text('Submit'),
                     onPressed: () {
+                      saveForm();
                       uploadImage();
                     },
                   ),
