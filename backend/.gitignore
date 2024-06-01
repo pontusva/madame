@@ -1,3 +1,4 @@
 node_modules
 .env
 configs/db.queries.ts
+uploads

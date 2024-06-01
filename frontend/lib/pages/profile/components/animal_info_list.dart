@@ -1,6 +1,8 @@
 import "dart:io";
 import "package:flutter/material.dart";
+import 'package:http/http.dart' as http;
 import "package:image_picker/image_picker.dart";
+import 'package:http_parser/http_parser.dart';
 
 class AnimalInfoList extends StatefulWidget {
   const AnimalInfoList({super.key});
@@ -14,6 +16,24 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
   final Map<String, String> _formData = {};
   File? galleryFile;
   final picker = ImagePicker();
+
+  void uploadImage() async {
+    var request =
+        http.MultipartRequest('POST', Uri.parse('http://10.0.2.2:4000/upload'));
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'image',
+      galleryFile!.path,
+      contentType: MediaType.parse('image/jpeg'),
+    ));
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Uploaded!');
+    } else {
+      print('Failed to upload file: ${response.statusCode}');
+    }
+  }
 
   void _showPicker({
     required BuildContext context,
@@ -317,7 +337,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     ),
                     child: const Text('Submit'),
                     onPressed: () {
-                      _saveForm();
+                      uploadImage();
                     },
                   ),
                 ],
