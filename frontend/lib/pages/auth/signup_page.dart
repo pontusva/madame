@@ -76,10 +76,6 @@ class _SignupPageState extends State<SignupPage> {
       }),
     );
 
-    print(response.statusCode);
-    print(response.body);
-    print(response.headers);
-
     if (response.statusCode == 409) {
       throw Exception('User already exists');
     }
