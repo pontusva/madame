@@ -25,34 +25,46 @@ class _SignupPageState extends State<SignupPage> {
       TextEditingController();
 
   Future<void> signUp() async {
+    UserCredential? user;
     try {
-      UserCredential user =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: textEditingControllerEmail.text,
         password: textEditingControllerPassword.text,
       );
-      createUser(user.user?.uid as String);
+      await createUser(user.user?.uid as String);
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       if (e.code == 'weak-password') {
-        const SnackBar(
-          content: Text('The password provided is too weak.'),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The password provided is too weak.'),
+          ),
         );
       } else if (e.code == 'email-already-in-use') {
-        const SnackBar(
-          content: Text('The account already exists for that email.'),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The account already exists for that email.'),
+          ),
         );
       }
     } catch (e) {
-      SnackBar(
-        content: Text(
-          e.toString(),
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
         ),
       );
+      // Delete the user from Firebase Authentication if createUser throws an exception
+      if (user != null) {
+        user.user?.delete();
+      }
     }
   }
 
-  Future<http.Response> createUser(String uid) {
-    return http.post(
+  Future<http.Response> createUser(String uid) async {
+    final response = await http.post(
       Uri.parse('http://10.0.2.2:4000/signUp'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -63,6 +75,65 @@ class _SignupPageState extends State<SignupPage> {
         'username': textEditingControllerUsername.text,
       }),
     );
+
+    print(response.statusCode);
+    print(response.body);
+    print(response.headers);
+
+    if (response.statusCode == 409) {
+      throw Exception('User already exists');
+    }
+
+    return response;
+  }
+
+  verifyLogin() async {
+    UserCredential? user;
+    try {
+      user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: textEditingControllerEmail.text,
+        password: textEditingControllerPassword.text,
+      );
+      await createUser(user.user?.uid as String);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) {
+            return const HomePage();
+          },
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      if (e.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The password provided is too weak.'),
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('The account already exists for that email.'),
+          ),
+        );
+      }
+      if (user != null) {
+        user.user?.delete();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
+      if (user != null) {
+        user.user?.delete();
+      }
+    }
   }
 
   @override
@@ -159,24 +230,7 @@ class _SignupPageState extends State<SignupPage> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    await signUp();
-                    FirebaseAuth.instance.userChanges().listen(
-                      (User? user) {
-                        if (user == null) {
-                          const SnackBar(
-                            content: Text('User is currently signed out!'),
-                          );
-                        } else {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const HomePage();
-                              },
-                            ),
-                          );
-                        }
-                      },
-                    );
+                    await verifyLogin();
                   },
                   child: const Text('Register'),
                 ),
