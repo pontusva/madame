@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express, { Express } from "express";
 import { signUp, loggedIn } from "./routes/auth";
 import { upload, addLostPet, uploadImage } from "./routes/imageUpload";
-import { getStates } from "./CountryStateApi";
+import { getStates, getCities } from "./CountryStateApi";
 
 dotenv.config();
 
@@ -17,6 +17,7 @@ app.post("/loggedIn", loggedIn);
 app.post("/uploadImage", upload.single("image"), uploadImage);
 app.post("/upload", addLostPet);
 app.get("/states", getStates);
+app.get("/cities", getCities);
 
 app.listen(port, async () => {
   await client.connect();

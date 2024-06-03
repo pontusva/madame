@@ -17,19 +17,18 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, String> _formData = {};
   File? galleryFile;
-  late Future<Map<String, dynamic>> user;
+  List<dynamic>? _cities;
+  String? _selectedState;
+  String _selectedCity = '';
+
   final picker = ImagePicker();
-  Future<Map<String, dynamic>> getUserInfo() async {
-    var uid = FirebaseAuth.instance.currentUser!.uid;
+  Future<List<dynamic>> getStates() async {
     try {
-      final res = await http.post(
-        Uri.parse("http://10.0.2.2:4000/loggedIn"),
+      final res = await http.get(
+        Uri.parse("http://10.0.2.2:4000/states"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'firebaseuid': uid,
-        }),
       );
 
       final data = jsonDecode(res.body);
@@ -40,10 +39,33 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    user = getUserInfo();
+  void _fetchCities(String stateCode) async {
+    print("Fetching cities for state: $stateCode");
+    final cities = await getCities(stateCode);
+    setState(() {
+      _cities = cities;
+      if (_cities != null && _cities!.isNotEmpty) {
+        _selectedCity = _cities![0]['name']; // This value exists in _cities
+      }
+    });
+  }
+
+  Future<List<dynamic>> getCities(String stateCode) async {
+    try {
+      final res = await http.get(
+        Uri.parse("http://10.0.2.2:4000/cities?stateCode=$stateCode"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      final data = jsonDecode(res.body);
+      print(data);
+      return data;
+    } catch (e) {
+      print('Error fetching cities: $e');
+      throw e.toString();
+    }
   }
 
   void _showPicker({
@@ -304,47 +326,63 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     'Location',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'City',
-                      border: border,
-                    ),
-                    onSaved: (value) => _formData['City'] = value!,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a city';
+                  // State Dropdown
+                  FutureBuilder<List<dynamic>>(
+                    future: getStates(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (snapshot.hasData) {
+                        if (_selectedState == null ||
+                            !snapshot.data!.any((dynamic value) =>
+                                value['iso2'] == _selectedState)) {
+                          _selectedState = snapshot.data![0]['iso2'];
+                        }
+                        return DropdownButton<String>(
+                          hint: const Text("Please select a state"),
+                          value: _selectedState,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedState = newValue;
+                              _fetchCities(newValue!);
+                            });
+                          },
+                          items: snapshot.data!
+                              .map<DropdownMenuItem<String>>((dynamic value) {
+                            return DropdownMenuItem<String>(
+                              value: value['iso2'],
+                              child: Text(value['name']),
+                            );
+                          }).toList(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
                       }
-                      return null;
+
+                      // By default, show a loading spinner.
+                      return const CircularProgressIndicator();
                     },
                   ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Region',
-                      border: border,
+
+// City Dropdown
+                  if (_cities != null)
+                    DropdownButton<String>(
+                      hint: const Text("Please select a city"),
+                      value:
+                          _selectedCity, // This can be null if _cities is empty
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedCity = newValue ?? '';
+                          _formData['City'] = newValue ?? '';
+                        });
+                      },
+                      items: _cities!
+                          .map<DropdownMenuItem<String>>((dynamic value) {
+                        return DropdownMenuItem<String>(
+                          value: value['name'],
+                          child: Text(value['name']),
+                        );
+                      }).toList(),
                     ),
-                    onSaved: (value) => _formData['Region'] = value!,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a region';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Area',
-                      border: border,
-                    ),
-                    onSaved: (value) => _formData['Area'] = value!,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an area';
-                      }
-                      return null;
-                    },
-                  ),
                   const SizedBox(height: 16.0),
                   const Text(
                     'Upload Image',
