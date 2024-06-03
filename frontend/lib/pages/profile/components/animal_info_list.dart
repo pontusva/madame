@@ -50,22 +50,29 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     });
   }
 
-  Future<List<dynamic>> getCities(String stateCode) async {
-    try {
-      final res = await http.get(
-        Uri.parse("http://10.0.2.2:4000/cities?stateCode=$stateCode"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+  Future<List<dynamic>> getCities(String stateCode,
+      {int retryCount = 3}) async {
+    for (var i = 0; i < retryCount; i++) {
+      try {
+        final res = await http.get(
+          Uri.parse("http://10.0.2.2:4000/cities?stateCode=$stateCode"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        );
 
-      final data = jsonDecode(res.body);
-      print(data);
-      return data;
-    } catch (e) {
-      print('Error fetching cities: $e');
-      throw e.toString();
+        final data = jsonDecode(res.body);
+        return data;
+      } catch (e) {
+        print('Error fetching cities: $e');
+        if (i == retryCount - 1) {
+          throw e.toString();
+        }
+        await Future.delayed(
+            Duration(seconds: 2)); // Wait for 2 seconds before retrying
+      }
     }
+    throw 'Failed to fetch cities after $retryCount attempts';
   }
 
   void _showPicker({
@@ -186,6 +193,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     'Animal Information',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 16.0),
                   TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Name',
@@ -326,7 +334,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     'Location',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  // State Dropdown
+                  const SizedBox(height: 16.0),
                   FutureBuilder<List<dynamic>>(
                     future: getStates(),
                     builder: (BuildContext context,
@@ -335,10 +343,12 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                         if (_selectedState == null ||
                             !snapshot.data!.any((dynamic value) =>
                                 value['iso2'] == _selectedState)) {
-                          _selectedState = snapshot.data![0]['iso2'];
+                          _selectedState = null; // Set _selectedState to null
                         }
                         return DropdownButton<String>(
-                          hint: const Text("Please select a state"),
+                          hint: _selectedState == null
+                              ? const Text("Please select a state")
+                              : null, // Show the hint when _selectedState is null
                           value: _selectedState,
                           onChanged: (String? newValue) {
                             setState(() {
@@ -362,13 +372,10 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                       return const CircularProgressIndicator();
                     },
                   ),
-
-// City Dropdown
                   if (_cities != null)
                     DropdownButton<String>(
                       hint: const Text("Please select a city"),
-                      value:
-                          _selectedCity, // This can be null if _cities is empty
+                      value: _selectedCity,
                       onChanged: (String? newValue) {
                         setState(() {
                           _selectedCity = newValue ?? '';

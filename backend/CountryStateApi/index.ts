@@ -26,7 +26,6 @@ export const getCities = async (req: Request, res: Response) => {
   const { stateCode } = req.query;
 
   if (!process.env.STATES) return;
-  console.log("stateCode", stateCode);
   const headers = {
     "X-CSCAPI-KEY": process.env.STATES,
   };
