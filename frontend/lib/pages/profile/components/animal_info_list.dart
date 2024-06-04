@@ -1,6 +1,5 @@
 import "dart:io";
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
 import "package:image_picker/image_picker.dart";
@@ -68,8 +67,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
         if (i == retryCount - 1) {
           throw e.toString();
         }
-        await Future.delayed(
-            Duration(seconds: 2)); // Wait for 2 seconds before retrying
+        await Future.delayed(const Duration(seconds: 2));
       }
     }
     throw 'Failed to fetch cities after $retryCount attempts';
