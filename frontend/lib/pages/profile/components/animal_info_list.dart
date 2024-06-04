@@ -128,6 +128,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
+      _formData['user_id'] = context.read<UserProvider>().userId.toString();
       var response = await http.post(
         Uri.parse('http://10.0.2.2:4000/upload'),
         headers: <String, String>{
@@ -355,6 +356,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                             setState(() {
                               _selectedState = newValue;
                               _fetchCities(newValue!);
+                              _formData['Region'] = newValue;
                             });
                           },
                           items: snapshot.data!
@@ -391,6 +393,19 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                         );
                       }).toList(),
                     ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Area',
+                      border: border,
+                    ),
+                    onSaved: (value) => _formData['Area'] = value!,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter collar and tags';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 16.0),
                   const Text(
                     'Upload Image',
