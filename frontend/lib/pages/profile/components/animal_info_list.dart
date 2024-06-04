@@ -1,9 +1,11 @@
 import "dart:io";
 import 'dart:convert';
 import "package:flutter/material.dart";
+import 'package:frontend/providers/user_provider.dart';
 import 'package:http/http.dart' as http;
 import "package:image_picker/image_picker.dart";
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
 
 class AnimalInfoList extends StatefulWidget {
   const AnimalInfoList({super.key});
@@ -165,6 +167,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
 
   @override
   Widget build(BuildContext context) {
+    print(context.read<UserProvider>().userId);
     const border = OutlineInputBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(8.0),

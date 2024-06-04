@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/user_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/pages/auth/signin_page.dart';
 import 'package:frontend/pages/navigation/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({
@@ -35,6 +37,7 @@ class _WelcomePageState extends State<WelcomePage> {
       );
 
       final data = jsonDecode(res.body);
+      if (!mounted) return data;
 
       return data;
     } catch (e) {
@@ -67,6 +70,7 @@ class _WelcomePageState extends State<WelcomePage> {
               }
               final data = snapshot.data!;
               final username = data["username"];
+              context.read<UserProvider>().userId = data["userid"];
               return Text("Welcome, $username!");
             }),
         actions: [
