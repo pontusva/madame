@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/user_provider.dart';
@@ -56,23 +55,24 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       appBar: AppBar(
         title: FutureBuilder(
-            future: user,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-              final data = snapshot.data!;
-              final username = data["username"];
-              context.read<UserProvider>().userId = data["userid"];
-              return Text("Welcome, $username!");
-            }),
+          future: user,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
+            final data = snapshot.data!;
+            final username = data["username"];
+            context.read<UserProvider>().userId = data["userid"];
+            return Text("Welcome, $username!");
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
