@@ -41,7 +41,6 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
   }
 
   void _fetchCities(String stateCode) async {
-    print("Fetching cities for state: $stateCode");
     final cities = await getCities(stateCode);
     setState(() {
       _cities = cities;
@@ -65,7 +64,6 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
         final data = jsonDecode(res.body);
         return data;
       } catch (e) {
-        print('Error fetching cities: $e');
         if (i == retryCount - 1) {
           throw e.toString();
         }
