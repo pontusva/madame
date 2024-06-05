@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now()) + ".jpg";
+    cb(null, file.fieldname + "-" + Date.now() + ".jpg");
   },
 });
 export const upload = multer({ storage });
@@ -20,7 +20,7 @@ export const uploadImage = async (req: Request, res: Response) => {
       return res.status(400).send("No file uploaded");
     }
     const { userId } = req.body;
-    await lostPetQuery.uploadImage.values(userId, id, req.file.originalname);
+    await lostPetQuery.uploadImage.values(userId, id, req.file.filename);
   } catch (error) {
     console.log(error);
   }
