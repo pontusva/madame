@@ -19,7 +19,8 @@ export const uploadImage = async (req: Request, res: Response) => {
     if (!req.file) {
       return res.status(400).send("No file uploaded");
     }
-    await lostPetQuery.uploadImage.values(id, req.file.originalname);
+    const { userId } = req.body;
+    await lostPetQuery.uploadImage.values(userId, id, req.file.originalname);
   } catch (error) {
     console.log(error);
   }

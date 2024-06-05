@@ -143,10 +143,14 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     }
   }
 
-  void uploadImage() async {
+  void uploadImage(BuildContext context) async {
     if (galleryFile != null) {
       var request = http.MultipartRequest(
           'POST', Uri.parse('http://10.0.2.2:4000/uploadImage'));
+
+      // Add userId to request
+      String userId = context.read<UserProvider>().userId.toString();
+      request.fields['userId'] = userId;
 
       // Add file to request
       request.files.add(await http.MultipartFile.fromPath(
@@ -442,7 +446,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     child: const Text('Submit'),
                     onPressed: () {
                       saveForm();
-                      uploadImage();
+                      uploadImage(context);
                     },
                   ),
                 ],
