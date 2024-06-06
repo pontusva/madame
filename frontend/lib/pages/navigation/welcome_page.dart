@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:frontend/pages/auth/signin_page.dart';
 import 'package:frontend/pages/navigation/profile_page.dart';
 import 'package:provider/provider.dart';
 
