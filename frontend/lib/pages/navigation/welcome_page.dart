@@ -64,7 +64,19 @@ class _WelcomePageState extends State<WelcomePage> {
             }
             if (snapshot.hasError) {
               return Center(
-                child: Text(snapshot.error.toString()),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      child: const Text('an error occured, try again'),
+                      onPressed: () {
+                        setState(() {
+                          user = getUserInfo();
+                        });
+                      },
+                    ),
+                  ],
+                ),
               );
             }
             final data = snapshot.data!;
