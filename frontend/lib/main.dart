@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/firebase_options.dart';
+import 'package:frontend/pages/auth/home_page.dart';
 import 'package:frontend/pages/auth/signup_page.dart';
+import 'package:frontend/pages/navigation/welcome_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,8 +19,21 @@ Future<void> main() async {
   );
 }
 
-class Madame extends StatelessWidget {
+class Madame extends StatefulWidget {
   const Madame({super.key});
+
+  @override
+  State<Madame> createState() => _MadameState();
+}
+
+class _MadameState extends State<Madame> {
+  late Stream<User?> authStateChanges;
+
+  @override
+  void initState() {
+    super.initState();
+    authStateChanges = FirebaseAuth.instance.authStateChanges();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +43,19 @@ class Madame extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Scaffold(
-        body: SignupPage(),
+      home: FutureBuilder<User?>(
+        future: authStateChanges.first,
+        builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else {
+            if (snapshot.hasData) {
+              return const HomePage();
+            } else {
+              return const SignupPage();
+            }
+          }
+        },
       ),
     );
   }
