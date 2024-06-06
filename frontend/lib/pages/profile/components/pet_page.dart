@@ -40,34 +40,75 @@ class _PetPageState extends State<PetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pet Details'),
+      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 150,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.network(
-                  'http://localhost:4000/images/${widget.imageUrl}',
-                  fit: BoxFit.contain,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 150,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.network(
+                    'http://localhost:4000/images/${widget.imageUrl}',
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-            ),
-            Text('Name: ${widget.name}'),
-            Text('Species: ${widget.species}'),
-            Text('Breed: ${widget.breed}'),
-            Text('Age: ${widget.age.toString()}'),
-            Text('Image URL: ${widget.imageUrl}'),
-            Text('Size: ${widget.size}'),
-            Text('Color: ${widget.color}'),
-            Text('Markings: ${widget.markings}'),
-            Text('Collar and Tags: ${widget.collarAndTags}'),
-            Text('Microchip: ${widget.microchip ? 'Yes' : 'No'}'),
-            Text('City: ${widget.city}'),
-            Text('Region: ${widget.region}'),
-            Text('Area: ${widget.area}'),
-          ],
+              const SizedBox(height: 20), // Add some space
+              Text('Name: ${widget.name}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Species: ${widget.species}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Breed: ${widget.breed}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Age: ${widget.age.toString()}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Size: ${widget.size}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Color: ${widget.color}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Markings: ${widget.markings}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Collar and Tags: ${widget.collarAndTags}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Microchip: ${widget.microchip ? 'Yes' : 'No'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'City: ${widget.city}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Region: ${widget.region}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Area: ${widget.area}',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
         ),
       ),
     );
