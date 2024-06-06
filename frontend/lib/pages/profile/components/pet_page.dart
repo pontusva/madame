@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:frontend/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class PetPage extends StatefulWidget {
   final String name;
@@ -14,6 +18,7 @@ class PetPage extends StatefulWidget {
   final String region;
   final String area;
   final String imageUrl;
+  final int animalid;
 
   const PetPage({
     super.key,
@@ -30,6 +35,7 @@ class PetPage extends StatefulWidget {
     required this.city,
     required this.region,
     required this.area,
+    required this.animalid,
   });
 
   @override
@@ -37,6 +43,30 @@ class PetPage extends StatefulWidget {
 }
 
 class _PetPageState extends State<PetPage> {
+  Future<void> deletePet() async {
+    try {
+      final res = await http.post(
+        Uri.parse("http://localhost:4000/deletePet"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'animalid': widget.animalid,
+          'userid': context.read<UserProvider>().userId.toString(),
+        }),
+      );
+
+      final data = jsonDecode(res.body);
+      if (data['status'] == 'success') {
+        Navigator.pop(context);
+      } else {
+        throw data['message'];
+      }
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,6 +136,12 @@ class _PetPageState extends State<PetPage> {
               Text(
                 'Area: ${widget.area}',
                 style: const TextStyle(fontSize: 16),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  deletePet();
+                },
+                child: const Text('Delete Pet'),
               ),
             ],
           ),

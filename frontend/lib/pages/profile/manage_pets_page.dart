@@ -29,6 +29,7 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
       );
 
       final data = jsonDecode(res.body);
+      print(data);
       return data;
     } catch (e) {
       throw e.toString();
@@ -111,6 +112,7 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
                                 region: data[index]['region'],
                                 area: data[index]['area'],
                                 imageUrl: data[index]['imageurl'],
+                                animalid: data[index]['animalid'],
                               ),
                             ),
                           );

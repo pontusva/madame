@@ -60,3 +60,14 @@ export const addLostPet = async (req: Request, res: Response) => {
   );
   id = response.rows[0].id;
 };
+
+export const removeAnimalInfoAndImage = async (req: Request, res: Response) => {
+  const { userid, animalid } = req.body;
+
+  const response = await lostPetQuery.removeAnimalInfoAndImage.values(
+    animalid,
+    userid
+  );
+
+  console.log(response);
+};
