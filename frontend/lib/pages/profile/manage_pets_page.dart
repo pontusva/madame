@@ -1,10 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/profile/add_pet_page.dart';
-import 'package:frontend/providers/user_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 class ManagePetsPage extends StatefulWidget {
   const ManagePetsPage({super.key});
@@ -29,7 +26,6 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
       );
 
       final data = jsonDecode(res.body);
-      print(data);
       return data;
     } catch (e) {
       throw e.toString();
@@ -64,25 +60,47 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
         centerTitle: true,
         title: const Text('Manage Pets'),
       ),
-      body: Scaffold(
-        body: FutureBuilder(
-          future: animalInfo,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
+      body: FutureBuilder(
+        future: animalInfo,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          final data = snapshot.data as List<dynamic>;
+          return ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              final imageUrl = data[index]['imageurl'];
+              return SizedBox(
+                width: 400,
+                height: 400,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        data[index]['name'],
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      Expanded(
+                        child: Image.network(
+                            'http://10.0.2.2:4000/images/$imageUrl',
+                            fit: BoxFit.contain),
+                      ),
+                    ],
+                  ),
+                ),
               );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
-            final data = snapshot.data!;
-            final username = data[0]['imageurl'];
-            return Text("Welcome, $username");
-          },
-        ),
+            },
+          );
+        },
       ),
     );
   }

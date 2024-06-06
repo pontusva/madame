@@ -20,6 +20,7 @@ app.post("/upload", addLostPet);
 app.get("/states", getStates);
 app.get("/cities", getCities);
 app.post("/animalInfo", animalInfo);
+app.use("/images", express.static("uploads"));
 
 app.listen(port, async () => {
   await client.connect();
