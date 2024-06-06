@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/firebase_options.dart';
 import 'package:frontend/pages/auth/home_page.dart';
 import 'package:frontend/pages/auth/signup_page.dart';
-import 'package:frontend/pages/navigation/welcome_page.dart';
 import 'package:frontend/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
