@@ -37,7 +37,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
       final data = jsonDecode(res.body);
       if (!mounted) return data;
-
+      context.read<UserProvider>().userId = data["userid"];
       return data;
     } catch (e) {
       throw e.toString();
@@ -54,6 +54,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: FutureBuilder(
           future: user,
           builder: (context, snapshot) {
@@ -69,31 +70,12 @@ class _WelcomePageState extends State<WelcomePage> {
             }
             final data = snapshot.data!;
             final username = data["username"];
-            context.read<UserProvider>().userId = data["userid"];
             return Text("Welcome, $username!");
           },
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const SigninPage();
-                  },
-                ),
-              );
-            },
-            icon: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.logout),
-            ),
-          ),
-        ],
       ),
       body: const Center(
-        child: Text('Welcome to the app!'),
+        child: Text('In loving memory of Madame!'),
       ),
     );
   }
