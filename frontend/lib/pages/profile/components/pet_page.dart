@@ -52,7 +52,7 @@ class _PetPageState extends State<PetPage> {
         },
         body: jsonEncode(<String, dynamic>{
           'animalid': widget.animalid,
-          'userid': context.read<UserProvider>().userId.toString(),
+          'imageUrl': widget.imageUrl,
         }),
       );
 

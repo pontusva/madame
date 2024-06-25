@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { lostPetQuery } from "../configs/db.queries";
 import { client } from "../configs/db.config";
 import multer from "multer";
+import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -12,6 +13,16 @@ const storage = multer.diskStorage({
   },
 });
 export const upload = multer({ storage });
+
+const deleteFile = (filePath: string) => {
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error("Failed to delete file:", err);
+    } else {
+      console.log(`${filePath} was deleted.`);
+    }
+  });
+};
 
 export const addLostPetWithImage = async (req: Request, res: Response) => {
   try {
@@ -69,7 +80,10 @@ export const addLostPetWithImage = async (req: Request, res: Response) => {
 };
 
 export const removeAnimalInfoAndImage = async (req: Request, res: Response) => {
-  const { userid, animalid } = req.body;
-  console.log(animalid);
+  const { animalid, imageUrl } = req.body;
+
   await lostPetQuery.removeAnimalInfoAndImage.values(animalid);
+  deleteFile(`uploads/${imageUrl}`);
+
+  res.send("Animal info and image removed successfully");
 };
