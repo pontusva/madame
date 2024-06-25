@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:frontend/providers/user_provider.dart';
-import 'package:provider/provider.dart';
 
 class PetPage extends StatefulWidget {
   final String name;
@@ -57,7 +55,7 @@ class _PetPageState extends State<PetPage> {
       );
 
       final data = jsonDecode(res.body);
-      if (data['status'] == 'success') {
+      if (data['status'] == 'success' && mounted) {
         Navigator.pop(context);
       } else {
         throw data['message'];
