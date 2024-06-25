@@ -122,55 +122,40 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     );
   }
 
-  void saveForm() async {
+  Future<void> saveFormAndUploadImage(BuildContext context) async {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
       _formData['user_id'] = context.read<UserProvider>().userId.toString();
-      var response = await http.post(
-        Uri.parse('http://localhost:4000/upload'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(_formData),
-      );
 
-      if (response.statusCode == 200) {
-        print('Form data submitted!');
-      } else {
-        print('Failed to submit form data: ${response.statusCode}');
+      var uri = Uri.parse('http://localhost:4000/upload');
+      var request = http.MultipartRequest('POST', uri);
+
+      // Add form data as fields
+      _formData.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      // Add file to request if exists
+      if (galleryFile != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image',
+          galleryFile!.path,
+          contentType: MediaType.parse('image/jpeg'),
+        ));
       }
-    }
-  }
-
-  void uploadImage(BuildContext context) async {
-    if (galleryFile != null) {
-      var request = http.MultipartRequest(
-          'POST', Uri.parse('http://localhost:4000/uploadImage'));
-
-      // Add userId to request
-      String userId = context.read<UserProvider>().userId.toString();
-      request.fields['userId'] = userId;
-
-      // Add file to request
-      request.files.add(await http.MultipartFile.fromPath(
-        'image',
-        galleryFile!.path,
-        contentType: MediaType.parse('image/jpeg'),
-      ));
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        print('Uploaded!');
+        print('Form data and image uploaded!');
       } else {
-        print('Failed to upload file: ${response.statusCode}');
+        print('Failed to upload: ${response.statusCode}');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(context.read<UserProvider>().userId);
     const border = OutlineInputBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(8.0),
@@ -445,8 +430,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
                     ),
                     child: const Text('Submit'),
                     onPressed: () {
-                      saveForm();
-                      uploadImage(context);
+                      saveFormAndUploadImage(context);
                     },
                   ),
                 ],

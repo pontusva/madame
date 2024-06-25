@@ -4,8 +4,7 @@ import express, { Express } from "express";
 import { signUp, loggedIn } from "./routes/auth";
 import {
   upload,
-  addLostPet,
-  uploadImage,
+  addLostPetWithImage,
   removeAnimalInfoAndImage,
 } from "./routes/imageUpload";
 import { animalInfo } from "./routes/getAnimalFromUser";
@@ -21,8 +20,7 @@ app.use(express.json());
 app.use("/images", express.static("uploads"));
 app.post("/signup", signUp);
 app.post("/loggedIn", loggedIn);
-app.post("/uploadImage", upload.single("image"), uploadImage);
-app.post("/upload", addLostPet);
+app.post("/upload", upload.single("image"), addLostPetWithImage);
 app.get("/states", getStates);
 app.get("/cities", getCities);
 app.post("/animalInfo", animalInfo);
