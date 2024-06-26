@@ -68,14 +68,6 @@ class SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    const border = OutlineInputBorder(
-      borderRadius: BorderRadius.all(
-        Radius.circular(8.0),
-      ),
-      borderSide: BorderSide(
-        color: Colors.grey,
-      ),
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Find Pet'),
