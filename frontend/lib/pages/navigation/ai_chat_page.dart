@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/ai_chat/ai_chat.dart';
 
 class AiChatPage extends StatelessWidget {
   const AiChatPage({super.key});
@@ -6,9 +7,7 @@ class AiChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text('AI Chat Page'),
-      ),
+      body: AiChat(),
     );
   }
 }

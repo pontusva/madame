@@ -9,6 +9,7 @@ import {
 } from "./routes/imageUpload";
 import { animalInfo } from "./routes/getAnimalFromUser";
 import { getStates, getCities } from "./CountryStateApi";
+import { gemini } from "./routes/gemini";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.get("/states", getStates);
 app.get("/cities", getCities);
 app.post("/animalInfo", animalInfo);
 app.post("/deletePet", removeAnimalInfoAndImage);
+app.post("/gemini", gemini);
 
 app.listen(port, async () => {
   await client.connect();
