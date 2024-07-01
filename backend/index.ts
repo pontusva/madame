@@ -9,8 +9,7 @@ import {
 } from "./routes/imageUpload";
 import { animalInfo } from "./routes/getAnimalFromUser";
 import { getStates, getCities } from "./CountryStateApi";
-import { gemini } from "./routes/gemini";
-
+import { openAI } from "./routes/openAI";
 dotenv.config();
 
 const app: Express = express();
@@ -26,7 +25,7 @@ app.get("/states", getStates);
 app.get("/cities", getCities);
 app.post("/animalInfo", animalInfo);
 app.post("/deletePet", removeAnimalInfoAndImage);
-app.post("/gemini", gemini);
+app.post("/chat", openAI);
 
 app.listen(port, async () => {
   await client.connect();
