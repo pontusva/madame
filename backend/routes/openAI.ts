@@ -17,5 +17,3 @@ export async function openAI() {
     process.stdout.write(chunk.choices[0]?.delta?.content || "");
   }
 }
-
-openAI();
