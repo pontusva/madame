@@ -26,7 +26,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
   Future<List<dynamic>> getStates() async {
     try {
       final res = await http.get(
-        Uri.parse("http://localhost:4000/states"),
+        Uri.parse("http://10.0.2.2:4000/states"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -55,7 +55,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
     for (var i = 0; i < retryCount; i++) {
       try {
         final res = await http.get(
-          Uri.parse("http://localhost:4000/cities?stateCode=$stateCode"),
+          Uri.parse("http://10.0.2.2:4000/cities?stateCode=$stateCode"),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -128,7 +128,7 @@ class _AnimalInfoListState extends State<AnimalInfoList> {
       form.save();
       _formData['user_id'] = context.read<UserProvider>().userId.toString();
 
-      var uri = Uri.parse('http://localhost:4000/upload');
+      var uri = Uri.parse('http://10.0.2.2:4000/upload');
       var request = http.MultipartRequest('POST', uri);
 
       // Add form data as fields

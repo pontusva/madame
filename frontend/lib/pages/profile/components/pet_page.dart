@@ -44,7 +44,7 @@ class _PetPageState extends State<PetPage> {
   Future<void> deletePet() async {
     try {
       final res = await http.post(
-        Uri.parse("http://localhost:4000/deletePet"),
+        Uri.parse("http://10.0.2.2:4000/deletePet"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -82,7 +82,7 @@ class _PetPageState extends State<PetPage> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.network(
-                    'http://localhost:4000/images/${widget.imageUrl}',
+                    'http://10.0.2.2:4000/images/${widget.imageUrl}',
                     fit: BoxFit.contain,
                   ),
                 ),

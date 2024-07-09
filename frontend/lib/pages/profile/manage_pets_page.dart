@@ -19,7 +19,7 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
   Future<List<dynamic>> getAnimalInfo() async {
     try {
       final res = await http.post(
-        Uri.parse("http://localhost:4000/animalInfo"),
+        Uri.parse("http://10.0.2.2:4000/animalInfo"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -122,7 +122,7 @@ class _ManagePetsPageState extends State<ManagePetsPage> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(50),
                             child: Image.network(
-                              'http://localhost:4000/images/$imageUrl',
+                              'http://10.0.2.2:4000/images/$imageUrl',
                               fit: BoxFit.contain,
                             ),
                           ),

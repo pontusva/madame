@@ -25,7 +25,7 @@ class _WelcomePageState extends State<WelcomePage> {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     try {
       final res = await http.post(
-        Uri.parse("http://localhost:4000/loggedIn"),
+        Uri.parse("http://10.0.2.2:4000/loggedIn"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
